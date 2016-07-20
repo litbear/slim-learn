@@ -77,8 +77,10 @@ class App
     public function __construct($container = [])
     {
         if (is_array($container)) {
+            // 默认进这里，实例化Container类
             $container = new Container($container);
         }
+        // 也可以注入新容器实例，但该容器必须实现ContainerInterface
         if (!$container instanceof ContainerInterface) {
             throw new InvalidArgumentException('Expected a ContainerInterface');
         }
@@ -97,8 +99,10 @@ class App
 
     /**
      * Add middleware
+     * 添加中间件
      *
      * This method prepends new middleware to the app's middleware stack.
+     * 本方法为应用的中间件栈前置一个新的中间件
      *
      * @param  callable|string    $callable The callback routine
      *
@@ -279,9 +283,11 @@ class App
 
     /**
      * Run application
+     * 运行应用
      *
      * This method traverses the application middleware stack and then sends the
      * resultant Response object to the HTTP client.
+     * 本方法横贯应用的中间件栈，处理请求后向客户端发布响应结果
      *
      * @param bool|false $silent
      * @return ResponseInterface
@@ -306,9 +312,11 @@ class App
 
     /**
      * Process a request
+     * 处理请求
      *
      * This method traverses the application middleware stack and then returns the
      * resultant Response object.
+     * 本方法横贯应用的中间件栈，处理请求后向客户端发布响应结果
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
@@ -322,18 +330,23 @@ class App
     {
         // Ensure basePath is set
         $router = $this->container->get('router');
+        // 从URI对象中取出BasePath，再为路由器router设置BasePath
         if (is_callable([$request->getUri(), 'getBasePath']) && is_callable([$router, 'setBasePath'])) {
             $router->setBasePath($request->getUri()->getBasePath());
         }
 
         // Dispatch the Router first if the setting for this is on
+        // 如果相应的选项开启了，则会先调度路由，再穿过中间件。(该选项默认关闭)
         if ($this->container->get('settings')['determineRouteBeforeAppMiddleware'] === true) {
             // Dispatch router (note: you won't be able to alter routes after this)
+            // 调度路由，注意，本步之后将无法更改路由
             $request = $this->dispatchRouterAndPrepareRoute($request, $router);
         }
 
         // Traverse middleware stack
+        // 穿过中间件
         try {
+            // 依次调用中间件栈内的中间件
             $response = $this->callMiddlewareStack($request, $response);
         } catch (Exception $e) {
             $response = $this->handleException($e, $request, $response);
@@ -348,6 +361,7 @@ class App
 
     /**
      * Send the response the client
+     * 向客户端发送响应
      *
      * @param ResponseInterface $response
      */
@@ -503,6 +517,7 @@ class App
 
     /**
      * Dispatch the router to find the route. Prepare the route for use.
+     * 调度路由器，找出指定路线，配置指定路线以备使用
      *
      * @param ServerRequestInterface $request
      * @param RouterInterface        $router
@@ -510,28 +525,36 @@ class App
      */
     protected function dispatchRouterAndPrepareRoute(ServerRequestInterface $request, RouterInterface $router)
     {
+        // 尝试调度路由
         $routeInfo = $router->dispatch($request);
 
+        // 如找到了路线
         if ($routeInfo[0] === Dispatcher::FOUND) {
             $routeArguments = [];
             foreach ($routeInfo[2] as $k => $v) {
                 $routeArguments[$k] = urldecode($v);
             }
 
+            // 路由器根据调度信息寻找路线，注意，返回的是Route实例
             $route = $router->lookupRoute($routeInfo[1]);
+            // 路线实例根据请求实例和参数准备
             $route->prepare($request, $routeArguments);
 
             // add route to the request's attributes in case a middleware or handler needs access to the route
+            // 将路径类加入到请求实例中，以便中间件和句柄访问
             $request = $request->withAttribute('route', $route);
         }
 
+        // 将响应的请求方法和uri挂载到得到的路由信息上
         $routeInfo['request'] = [$request->getMethod(), (string) $request->getUri()];
 
+        // 返回一个添加了routeInfo属性的请求实例
         return $request->withAttribute('routeInfo', $routeInfo);
     }
 
     /**
      * Finalize response
+     * 完成响应
      *
      * @param ResponseInterface $response
      * @return ResponseInterface

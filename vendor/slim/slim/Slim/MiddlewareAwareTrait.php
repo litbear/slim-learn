@@ -17,15 +17,19 @@ use UnexpectedValueException;
 
 /**
  * Middleware
+ * 中间件
  *
  * This is an internal class that enables concentric middleware layers. This
  * class is an implementation detail and is used only inside of the Slim
  * application; it is not visible to—and should not be used by—end users.
+ * 这是个为应用提供同心圆中间件层的内部类，本类属于细节实现，仅用于Slim应用内部。
+ * 本类不可访问，并且不能被终端用户使用
  */
 trait MiddlewareAwareTrait
 {
     /**
      * Middleware call stack
+     * 中间件调用栈
      *
      * @var  \SplStack
      * @link http://php.net/manual/class.splstack.php
@@ -34,6 +38,7 @@ trait MiddlewareAwareTrait
 
     /**
      * Middleware stack lock
+     * 中间件锁
      *
      * @var bool
      */
@@ -99,6 +104,7 @@ trait MiddlewareAwareTrait
 
     /**
      * Call middleware stack
+     * 调用中间件栈
      *
      * @param  ServerRequestInterface $req A request object
      * @param  ResponseInterface      $res A response object
