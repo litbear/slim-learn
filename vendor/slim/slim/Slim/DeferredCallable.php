@@ -6,6 +6,12 @@ namespace Slim;
 use Closure;
 use Interop\Container\ContainerInterface;
 
+/**
+ * 延迟(调用)对象
+ * 
+ * 调用了延迟调用对象的实例就等于调用了中间件
+ */
+
 class DeferredCallable
 {
     use CallableResolverAwareTrait;
@@ -28,7 +34,9 @@ class DeferredCallable
     public function __invoke()
     {
         $callable = $this->resolveCallable($this->callable);
+        // 如果$callable不是可调用(callable)数组，而是闭包
         if ($callable instanceof Closure) {
+            // 如果是闭包，则改变其上下文
             $callable = $callable->bindTo($this->container);
         }
 

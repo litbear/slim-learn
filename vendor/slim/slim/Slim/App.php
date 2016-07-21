@@ -425,6 +425,7 @@ class App
 
     /**
      * Invoke application
+     * 执行应用--在横穿中间件栈之后会执行到这里
      *
      * This method implements the middleware interface. It receives
      * Request and Response objects, and it returns a Response object

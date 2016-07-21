@@ -46,13 +46,16 @@ trait MiddlewareAwareTrait
 
     /**
      * Add middleware
+     * 添加中间件
      *
      * This method prepends new middleware to the application middleware stack.
+     * 本方法将新的中间件前置于应用的中间件栈
      *
      * @param callable $callable Any callable that accepts three arguments:
-     *                           1. A Request object
-     *                           2. A Response object
-     *                           3. A "next" middleware callable
+     *                  所有的callable类型参数接受三个参数
+     *                           1. A Request object 请求对象
+     *                           2. A Response object 响应镀锡
+     *                           3. A "next" middleware callable 下一个中间件对象
      * @return static
      *
      * @throws RuntimeException         If middleware is added while the stack is dequeuing
@@ -60,16 +63,22 @@ trait MiddlewareAwareTrait
      */
     protected function addMiddleware(callable $callable)
     {
+        // 退出队列期间不能新增中间件
         if ($this->middlewareLock) {
             throw new RuntimeException('Middleware can’t be added once the stack is dequeuing');
         }
 
+        // 如果中间件栈为空，则调用seedMiddlewareStack()初始化栈
         if (is_null($this->stack)) {
             $this->seedMiddlewareStack();
         }
+        // 下一个中间件栈指向栈顶
         $next = $this->stack->top();
+        // 中间件栈的每一个元素都是一个闭包-匿名函数 该函数接受两个参数
+        // 请求实例和响应实例 $callable 应为DeferredCallable实例
         $this->stack[] = function (ServerRequestInterface $req, ResponseInterface $res) use ($callable, $next) {
             $result = call_user_func($callable, $req, $res, $next);
+            // 如果该中间件执行的结果不是ResponseInterface实例，则抛出异常
             if ($result instanceof ResponseInterface === false) {
                 throw new UnexpectedValueException(
                     'Middleware must return instance of \Psr\Http\Message\ResponseInterface'
@@ -86,6 +95,7 @@ trait MiddlewareAwareTrait
      * Seed middleware stack with first callable
      *
      * @param callable $kernel The last item to run as middleware
+     * 中间件栈的最后一个元素
      *
      * @throws RuntimeException if the stack is seeded more than once
      */
@@ -98,6 +108,7 @@ trait MiddlewareAwareTrait
             $kernel = $this;
         }
         $this->stack = new SplStack;
+        // 设置链表(栈)的迭代模式 栈风格|Elements are traversed by the iterator
         $this->stack->setIteratorMode(SplDoublyLinkedList::IT_MODE_LIFO | SplDoublyLinkedList::IT_MODE_KEEP);
         $this->stack[] = $kernel;
     }
