@@ -1,0 +1,20 @@
+# 中间件执行流程
+
+- 配置文件中，使用`app::add()`方法注入中间件实例
+
+```php
+$app->add(new \Slim\Csrf\Guard);
+```
+
+- `app::add()`方法内部使用`MiddlewareAwareTrait::addMiddleware`方法将传来的中间件实例和应用的容器包装到`DeferredCallable`实例内，`DeferredCallable`实例具备`__invoke()`魔术方法，其实例可以执行
+
+```php
+public function add($callable)
+{
+    return $this->addMiddleware(
+		new DeferredCallable($callable, $this->container)
+	);
+}
+```
+
+- 
