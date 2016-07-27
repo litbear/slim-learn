@@ -33,25 +33,23 @@ namespace Pimple;
  */
 class Container implements \ArrayAccess
 {
-    // 储存生成类的闭包，或者定义全局变量的字符串
+    // 缓存所有数组式赋值，当服务被首次取出时，
+    // 相应的values值会被替换为闭包的结果。
     private $values = array();
-    // 储存构造器，每次返回不同的实例
     private $factories;
-    // 以参数形式储存匿名函数
+    // 用于储存包裹（用作参数的函数）的闭包
     private $protected;
-    // 以单例模式取出对象时，会将本属性元素的值设为true
+    // 用以标记被赋值，并被取出的服务
     private $frozen = array();
-    // 
+    // 用以储存产生单例实例的原闭包
     private $raw = array();
-    // 以array_key形式赋值的对象，都会储存key
+    // 用于标记该id是否已被赋值注入
     private $keys = array();
 
     /**
      * Instantiate the container.
-     * 实例化容器
      *
      * Objects and parameters can be passed as argument to the constructor.
-     * 对象和参数可以通过参数传入构造函数
      *
      * @param array $values The parameters or objects.
      */
@@ -67,73 +65,82 @@ class Container implements \ArrayAccess
 
     /**
      * Sets a parameter or an object.
-     * 设置参数或对象
+     * 为容器添加一个参数或对象
      *
      * Objects must be defined as Closures.
-     * 对象也可以定义为闭包
+     * 对象必须定义为闭包
      *
      * Allowing any PHP callable leads to difficult to debug problems
      * as function names (strings) are callable (creating a function with
      * the same name as an existing parameter would break your container).
-     * 允许所有的PHP回调会导致难以调试，因为函数名是可执行的。（创建一个与
-     * 已存在参数同名的方法会导致容器报错）
+     * 如果不是闭包而是callable，会使程序变得难以维护
      *
      * @param string $id    The unique identifier for the parameter or object
-     * 参数或对象的唯一ID
      * @param mixed  $value The value of the parameter or a closure to define an object
-     * 参数的值或者定义对象的闭包
      *
      * @throws \RuntimeException Prevent override of a frozen service
      */
     public function offsetSet($id, $value)
     {
+        // 如果设置的容器id在frozen属性内，则抛出异常
         if (isset($this->frozen[$id])) {
             throw new \RuntimeException(sprintf('Cannot override frozen service "%s".', $id));
         }
 
+        // 将id与值都存入values属性
         $this->values[$id] = $value;
+        // 将keys标记为true
         $this->keys[$id] = true;
     }
 
     /**
      * Gets a parameter or an object.
-     * 获取参数或对象
-     * 在获取对象时，本方法不会返回匿名函数本身，而是返回单例
+     * 根据id获取参数或对象
      *
      * @param string $id The unique identifier for the parameter or object
-     * 参数或对象的唯一ID
      *
      * @return mixed The value of the parameter or an object
-     * 参数的值或者定义对象的闭包
      *
      * @throws \InvalidArgumentException if the identifier is not defined
      */
     public function offsetGet($id)
     {
+        // 如果在keys属性中未找到，则抛出异常
         if (!isset($this->keys[$id])) {
             throw new \InvalidArgumentException(sprintf('Identifier "%s" is not defined.', $id));
         }
 
-        // 进入这个分支，返回的就是匿名函数本身了，但判断条件
-        // 现在还不是很明白
         if (
+            // 在raw属性中发现了此id
             isset($this->raw[$id])
+            // 或此id对应的values不是闭包，也就是字符串
             || !is_object($this->values[$id])
+            // 或该id对应的values存在于protected属性中（即被当错参数的匿名函数，
+            // 此时取出的是闭包，需要执行才能得出结果）
             || isset($this->protected[$this->values[$id]])
+            // 或该id对应的values是不可执行的（匿名函数是存在'__invoke'的）
+            // var_dump(method_exists((function(){}), '__invoke')); // true
             || !method_exists($this->values[$id], '__invoke')
         ) {
+            // 则直接返回对应的vaules值
             return $this->values[$id];
         }
 
-        // 进入这个分支，返回的是一个新的实例
+        // 在检索id时，如果发现响应的values存在于factories属性
         if (isset($this->factories[$this->values[$id]])) {
+            // 则执行对应的values，并传入本容器
             return $this->values[$id]($this);
         }
 
+        // 如果走到这一步，则对应的values值应该为对象，且是第一次访问
+        // 取出闭包
         $raw = $this->values[$id];
+        // 将闭包的执行结果赋值给values，并返回
         $val = $this->values[$id] = $raw($this);
+        // 将对应的原闭包存入raw属性
         $this->raw[$id] = $raw;
 
+        // 缓存完毕，将此id冻结，不能再被赋值
         $this->frozen[$id] = true;
 
         return $val;
@@ -141,7 +148,7 @@ class Container implements \ArrayAccess
 
     /**
      * Checks if a parameter or an object is set.
-     * 检查参数或对象是否被设置
+     * 判断给定的id是否存在于容器
      *
      * @param string $id The unique identifier for the parameter or object
      *
@@ -154,7 +161,6 @@ class Container implements \ArrayAccess
 
     /**
      * Unsets a parameter or an object.
-     * 移除指定参数或对象
      *
      * @param string $id The unique identifier for the parameter or object
      */
@@ -171,8 +177,7 @@ class Container implements \ArrayAccess
 
     /**
      * Marks a callable as being a factory service.
-     * 标记一个回调函数为工厂服务
-     * factories属性储存构造器，每次返回不同的实例
+     * 将匿名函数存入factory属性，取出时，每取出一次，执行一次闭包
      *
      * @param callable $callable A service definition to be used as a factory
      *
@@ -193,10 +198,11 @@ class Container implements \ArrayAccess
 
     /**
      * Protects a callable from being interpreted as a service.
-     * 保护回调函数使之不被看作服务
+     * 保护callable类型的元素，使其不被视为“服务”
+     * 默认情况下Pimple会将匿名函数视为服务，因此，需要将匿名函数包装在
+     * protect中
      *
      * This is useful when you want to store a callable as a parameter.
-     * 本方法用于将一个回调函数储存为参数
      *
      * @param callable $callable A callable to protect from being evaluated
      *
@@ -206,10 +212,12 @@ class Container implements \ArrayAccess
      */
     public function protect($callable)
     {
+        // 如果不可执行则抛出异常
         if (!method_exists($callable, '__invoke')) {
             throw new \InvalidArgumentException('Callable is not a Closure or invokable object.');
         }
 
+        // 将其加入protected属性，并返回闭包
         $this->protected->attach($callable);
 
         return $callable;
@@ -217,9 +225,7 @@ class Container implements \ArrayAccess
 
     /**
      * Gets a parameter or the closure defining an object.
-     * 获取一个参数或定义对象的回调函数
-     * 本方法获取回调函数本身，例如$c->foo或者$c['foo']返回的是匿名函数的返回值
-     * 本方法返回的是匿名函数本身
+     * 获取包裹参数或服务的原始闭包
      *
      * @param string $id The unique identifier for the parameter or object
      *
@@ -237,16 +243,18 @@ class Container implements \ArrayAccess
             return $this->raw[$id];
         }
 
+        // 走到这一步，说明没被调用过
         return $this->values[$id];
     }
 
     /**
      * Extends an object definition.
-     * 扩展对象的定义
+     * 扩展已定义的对象
+     * （既可以扩展单例服务，也可以扩展工厂服务）
      *
      * Useful when you want to extend an existing object definition,
      * without necessarily loading that object.
-     * 本函数用于扩展一个已存在的对象，没有必要加载那个对象
+     * 在有些时候可能需要对已定义的对象进行进一步操作，此时可以使用本方法
      *
      * @param string   $id       The unique identifier for the object
      * @param callable $callable A service definition to extend the original
@@ -257,29 +265,28 @@ class Container implements \ArrayAccess
      */
     public function extend($id, $callable)
     {
-        // 必须是已经注入到的类
+        // 操作的对象必须已被注入
         if (!isset($this->keys[$id])) {
             throw new \InvalidArgumentException(sprintf('Identifier "%s" is not defined.', $id));
         }
 
-        // 该类必须以对象或者闭包的形式注册，不能是字符串参数
+        // 操作的对象必须是对象，且可调用
         if (!is_object($this->values[$id]) || !method_exists($this->values[$id], '__invoke')) {
             throw new \InvalidArgumentException(sprintf('Identifier "%s" does not contain an object definition.', $id));
         }
 
-        // 第二个参数必须是对象或者闭包
+        // 扩展对象的参数也必须是对象，且可调用
         if (!is_object($callable) || !method_exists($callable, '__invoke')) {
             throw new \InvalidArgumentException('Extension service definition is not a Closure or invokable object.');
         }
 
-        // 
         $factory = $this->values[$id];
 
         $extended = function ($c) use ($callable, $factory) {
             return $callable($factory($c), $c);
         };
 
-        // 重新绑定工厂生成器
+        // 缓存工厂
         if (isset($this->factories[$factory])) {
             $this->factories->detach($factory);
             $this->factories->attach($extended);
@@ -290,7 +297,6 @@ class Container implements \ArrayAccess
 
     /**
      * Returns all defined value names.
-     * 返回所有values属性的键
      *
      * @return array An array of value names
      */
@@ -301,7 +307,6 @@ class Container implements \ArrayAccess
 
     /**
      * Registers a service provider.
-     * 注册服务提供者
      *
      * @param ServiceProviderInterface $provider A ServiceProviderInterface instance
      * @param array                    $values   An array of values that customizes the provider
@@ -310,8 +315,10 @@ class Container implements \ArrayAccess
      */
     public function register(ServiceProviderInterface $provider, array $values = array())
     {
+        // 从服务提供者的register函数中批量注入
         $provider->register($this);
 
+        // 使用第二个参数批量注入
         foreach ($values as $key => $value) {
             $this[$key] = $value;
         }
