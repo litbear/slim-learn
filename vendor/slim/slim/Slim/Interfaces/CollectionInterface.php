@@ -10,6 +10,11 @@ namespace Slim\Interfaces;
 
 /**
  * Collection Interface
+ * 重启接口
+ * 
+ * 可以数组形式访问、赋值
+ * 可计数
+ * 可聚合代（可foreach）
  *
  * @package Slim
  * @since   3.0.0

@@ -13,6 +13,7 @@ use Slim\Interfaces\CollectionInterface;
 
 /**
  * Collection
+ * 容器类
  *
  * This class provides a common interface used by many other
  * classes in a Slim application that manage "collections"
@@ -190,10 +191,12 @@ class Collection implements CollectionInterface
 
     /********************************************************************************
      * IteratorAggregate interface
+     * 实现自IteratorAggregate接口
      *******************************************************************************/
 
     /**
      * Get collection iterator
+     * 获取集合的迭代器
      *
      * @return \ArrayIterator
      */

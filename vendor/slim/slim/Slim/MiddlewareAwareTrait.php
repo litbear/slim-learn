@@ -63,7 +63,7 @@ trait MiddlewareAwareTrait
      */
     protected function addMiddleware(callable $callable)
     {
-        // 退出队列期间不能新增中间件
+        // 正在依次执行中间件期间不能新增中间件
         if ($this->middlewareLock) {
             throw new RuntimeException('Middleware can’t be added once the stack is dequeuing');
         }
@@ -76,6 +76,8 @@ trait MiddlewareAwareTrait
         $next = $this->stack->top();
         // 中间件栈的每一个元素都是一个闭包-匿名函数 该函数接受两个参数
         // 请求实例和响应实例 $callable 应为DeferredCallable实例
+        // 匿名函数的返回值是DeferredCallable实例的运行结果，即
+        // __invoke结果。
         $this->stack[] = function (ServerRequestInterface $req, ResponseInterface $res) use ($callable, $next) {
             $result = call_user_func($callable, $req, $res, $next);
             // 如果该中间件执行的结果不是ResponseInterface实例，则抛出异常

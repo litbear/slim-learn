@@ -10,6 +10,7 @@ namespace Slim\Interfaces\Http;
 
 /**
  * Environment Interface
+ * 环境接口
  *
  * @package Slim
  * @since   3.0.0

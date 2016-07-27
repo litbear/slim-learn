@@ -68,8 +68,10 @@ class Container extends PimpleContainer implements ContainerInterface
      */
     public function __construct(array $values = [])
     {
+        // 执行父类Pimple的构造方法
         parent::__construct($values);
 
+        // 根据用户设置注册默认服务
         $userSettings = isset($values['settings']) ? $values['settings'] : [];
         $this->registerDefaultServices($userSettings);
     }

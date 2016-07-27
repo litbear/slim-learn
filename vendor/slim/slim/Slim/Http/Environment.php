@@ -13,10 +13,13 @@ use Slim\Interfaces\Http\EnvironmentInterface;
 
 /**
  * Environment
+ * 环境类
  *
  * This class decouples the Slim application from the global PHP environment.
  * This is particularly useful for unit testing, but it also lets us create
  * custom sub-requests.
+ * 本类将Slim应用从全局的PHP环境中解耦。这在单元测试中显得尤为重要，同时也为我们
+ * 创建个性化的子请求提供便利
  */
 class Environment extends Collection implements EnvironmentInterface
 {

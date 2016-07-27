@@ -1,5 +1,7 @@
 # 中间件执行流程
 
+## 添加中间件
+
 - 配置文件中，使用`app::add()`方法注入中间件实例
 
 ```php
@@ -17,4 +19,22 @@ public function add($callable)
 }
 ```
 
-- 
+- 在`MiddlewareAwareTrait::addMiddleware`方法内部，首先判断，当前是否正在执行中间件，如果是，则不能新增。
+
+```php
+// 正在依次执行中间件期间不能新增中间件
+if ($this->middlewareLock) {
+	throw new RuntimeException('Middleware can’t be added once the stack is dequeuing');
+}
+```
+- 如果代表中间件栈的属性`stack`为`null`则为其赋值一个SplStack实例，并为该实例进行初始化设置，设置栈底为app实例，就是说，在所有中间件执行完毕后，执行app的实例
+
+```php
+if (is_null($this->stack)) {
+	$this->seedMiddlewareStack();
+}
+```
+
+- 最后，对中间件栈进行入栈操作，栈的每个元素都是一个匿名函数，匿名函数的返回值是`DeferredCallable`实例的运行结果，即
+`__invoke()`方法的结果。
+
