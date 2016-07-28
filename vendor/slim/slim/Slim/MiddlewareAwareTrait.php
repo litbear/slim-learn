@@ -54,7 +54,7 @@ trait MiddlewareAwareTrait
      * @param callable $callable Any callable that accepts three arguments:
      *                  所有的callable类型参数接受三个参数
      *                           1. A Request object 请求对象
-     *                           2. A Response object 响应镀锡
+     *                           2. A Response object 响应对象
      *                           3. A "next" middleware callable 下一个中间件对象
      * @return static
      *
