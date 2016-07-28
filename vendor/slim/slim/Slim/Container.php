@@ -11,8 +11,6 @@ namespace Slim;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Pimple\Container as PimpleContainer;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\ContainerValueNotFoundException;
 use Slim\Exception\ContainerException as SlimContainerException;
 
@@ -68,10 +66,10 @@ class Container extends PimpleContainer implements ContainerInterface
      */
     public function __construct(array $values = [])
     {
-        // æ‰§è¡Œçˆ¶ç±»Pimpleçš„æž„é€ æ–¹æ³•
+        // Ö´ÐÐ¸¸ÀàPimpleµÄ¹¹Ôì·½·¨
         parent::__construct($values);
 
-        // æ ¹æ®ç”¨æˆ·è®¾ç½®æ³¨å†Œé»˜è®¤æœåŠ¡
+        // ¸ù¾ÝÓÃ»§ÉèÖÃ×¢²áÄ¬ÈÏ·þÎñ
         $userSettings = isset($values['settings']) ? $values['settings'] : [];
         $this->registerDefaultServices($userSettings);
     }

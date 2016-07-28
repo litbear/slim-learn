@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * Slim Framework (http://slimframework.com)
+ *
+ * @link      https://github.com/slimphp/Slim
+ * @copyright Copyright (c) 2011-2016 Josh Lockhart
+ * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
+ */
 
 namespace Slim;
 
@@ -7,9 +13,9 @@ use Closure;
 use Interop\Container\ContainerInterface;
 
 /**
- * å»¶è¿Ÿ(è°ƒç”¨)å¯¹è±¡
+ * ÑÓ³Ù(µ÷ÓÃ)¶ÔÏó
  * 
- * è°ƒç”¨äº†å»¶è¿Ÿè°ƒç”¨å¯¹è±¡çš„å®ä¾‹å°±ç­‰äºè°ƒç”¨äº†ä¸­é—´ä»¶
+ * µ÷ÓÃÁËÑÓ³Ùµ÷ÓÃ¶ÔÏóµÄÊµÀı¾ÍµÈÓÚµ÷ÓÃÁËÖĞ¼ä¼ş
  */
 
 class DeferredCallable
@@ -34,9 +40,9 @@ class DeferredCallable
     public function __invoke()
     {
         $callable = $this->resolveCallable($this->callable);
-        // å¦‚æœ$callableä¸æ˜¯å¯è°ƒç”¨(callable)æ•°ç»„ï¼Œè€Œæ˜¯é—­åŒ…
+        // Èç¹û$callable²»ÊÇ¿Éµ÷ÓÃ(callable)Êı×é£¬¶øÊÇ±Õ°ü
         if ($callable instanceof Closure) {
-            // å¦‚æœæ˜¯é—­åŒ…ï¼Œåˆ™æ”¹å˜å…¶ä¸Šä¸‹æ–‡
+            // Èç¹ûÊÇ±Õ°ü£¬Ôò¸Ä±äÆäÉÏÏÂÎÄ
             $callable = $callable->bindTo($this->container);
         }
 

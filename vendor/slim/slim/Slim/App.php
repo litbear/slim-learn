@@ -55,7 +55,7 @@ class App
      *
      * @var string
      */
-    const VERSION = '3.4.2';
+    const VERSION = '3.5.0';
 
     /**
      * Container
@@ -77,10 +77,10 @@ class App
     public function __construct($container = [])
     {
         if (is_array($container)) {
-            // é»˜è®¤è¿›è¿™é‡Œï¼Œå®ä¾‹åŒ–Containerç±»
+            // Ä¬ÈÏ½øÕâÀï£¬ÊµÀı»¯ContainerÀà
             $container = new Container($container);
         }
-        // ä¹Ÿå¯ä»¥æ³¨å…¥æ–°å®¹å™¨å®ä¾‹ï¼Œä½†è¯¥å®¹å™¨å¿…é¡»å®ç°ContainerInterface
+        // Ò²¿ÉÒÔ×¢ÈëĞÂÈİÆ÷ÊµÀı£¬µ«¸ÃÈİÆ÷±ØĞëÊµÏÖContainerInterface
         if (!$container instanceof ContainerInterface) {
             throw new InvalidArgumentException('Expected a ContainerInterface');
         }
@@ -99,10 +99,10 @@ class App
 
     /**
      * Add middleware
-     * æ·»åŠ ä¸­é—´ä»¶
+     * Ìí¼ÓÖĞ¼ä¼ş
      *
      * This method prepends new middleware to the app's middleware stack.
-     * æœ¬æ–¹æ³•ä¸ºåº”ç”¨çš„ä¸­é—´ä»¶æ ˆå‰ç½®ä¸€ä¸ªæ–°çš„ä¸­é—´ä»¶
+     * ±¾·½·¨ÎªÓ¦ÓÃµÄÖĞ¼ä¼şÕ»Ç°ÖÃÒ»¸öĞÂµÄÖĞ¼ä¼ş
      *
      * @param  callable|string    $callable The callback routine
      *
@@ -283,11 +283,11 @@ class App
 
     /**
      * Run application
-     * è¿è¡Œåº”ç”¨
+     * ÔËĞĞÓ¦ÓÃ
      *
      * This method traverses the application middleware stack and then sends the
      * resultant Response object to the HTTP client.
-     * æœ¬æ–¹æ³•æ¨ªè´¯åº”ç”¨çš„ä¸­é—´ä»¶æ ˆï¼Œå¤„ç†è¯·æ±‚åå‘å®¢æˆ·ç«¯å‘å¸ƒå“åº”ç»“æœ
+     * ±¾·½·¨ºá¹áÓ¦ÓÃµÄÖĞ¼ä¼şÕ»£¬´¦ÀíÇëÇóºóÏò¿Í»§¶Ë·¢²¼ÏìÓ¦½á¹û
      *
      * @param bool|false $silent
      * @return ResponseInterface
@@ -312,11 +312,11 @@ class App
 
     /**
      * Process a request
-     * å¤„ç†è¯·æ±‚
+     * ´¦ÀíÇëÇó
      *
      * This method traverses the application middleware stack and then returns the
      * resultant Response object.
-     * æœ¬æ–¹æ³•æ¨ªè´¯åº”ç”¨çš„ä¸­é—´ä»¶æ ˆï¼Œå¤„ç†è¯·æ±‚åå‘å®¢æˆ·ç«¯å‘å¸ƒå“åº”ç»“æœ
+     * ±¾·½·¨ºá¹áÓ¦ÓÃµÄÖĞ¼ä¼şÕ»£¬´¦ÀíÇëÇóºóÏò¿Í»§¶Ë·¢²¼ÏìÓ¦½á¹û
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
@@ -330,23 +330,23 @@ class App
     {
         // Ensure basePath is set
         $router = $this->container->get('router');
-        // ä»URIå¯¹è±¡ä¸­å–å‡ºBasePathï¼Œå†ä¸ºè·¯ç”±å™¨routerè®¾ç½®BasePath
+        // ´ÓURI¶ÔÏóÖĞÈ¡³öBasePath£¬ÔÙÎªÂ·ÓÉÆ÷routerÉèÖÃBasePath
         if (is_callable([$request->getUri(), 'getBasePath']) && is_callable([$router, 'setBasePath'])) {
             $router->setBasePath($request->getUri()->getBasePath());
         }
 
         // Dispatch the Router first if the setting for this is on
-        // å¦‚æœç›¸åº”çš„é€‰é¡¹å¼€å¯äº†ï¼Œåˆ™ä¼šå…ˆè°ƒåº¦è·¯ç”±ï¼Œå†ç©¿è¿‡ä¸­é—´ä»¶ã€‚(è¯¥é€‰é¡¹é»˜è®¤å…³é—­)
+        // Èç¹ûÏàÓ¦µÄÑ¡Ïî¿ªÆôÁË£¬Ôò»áÏÈµ÷¶ÈÂ·ÓÉ£¬ÔÙ´©¹ıÖĞ¼ä¼ş¡£(¸ÃÑ¡ÏîÄ¬ÈÏ¹Ø±Õ)
         if ($this->container->get('settings')['determineRouteBeforeAppMiddleware'] === true) {
             // Dispatch router (note: you won't be able to alter routes after this)
-            // è°ƒåº¦è·¯ç”±ï¼Œæ³¨æ„ï¼Œæœ¬æ­¥ä¹‹åå°†æ— æ³•æ›´æ”¹è·¯ç”±
+            // µ÷¶ÈÂ·ÓÉ£¬×¢Òâ£¬±¾²½Ö®ºó½«ÎŞ·¨¸ü¸ÄÂ·ÓÉ
             $request = $this->dispatchRouterAndPrepareRoute($request, $router);
         }
 
         // Traverse middleware stack
-        // ç©¿è¿‡ä¸­é—´ä»¶
+        // ´©¹ıÖĞ¼ä¼ş
         try {
-            // ä¾æ¬¡è°ƒç”¨ä¸­é—´ä»¶æ ˆå†…çš„ä¸­é—´ä»¶
+            // ÒÀ´Îµ÷ÓÃÖĞ¼ä¼şÕ»ÄÚµÄÖĞ¼ä¼ş
             $response = $this->callMiddlewareStack($request, $response);
         } catch (Exception $e) {
             $response = $this->handleException($e, $request, $response);
@@ -361,7 +361,7 @@ class App
 
     /**
      * Send the response the client
-     * å‘å®¢æˆ·ç«¯å‘é€å“åº”
+     * Ïò¿Í»§¶Ë·¢ËÍÏìÓ¦
      *
      * @param ResponseInterface $response
      */
@@ -425,7 +425,7 @@ class App
 
     /**
      * Invoke application
-     * æ‰§è¡Œåº”ç”¨--åœ¨è´¯ç©¿ä¸­é—´ä»¶æ ˆä¹‹åä¼šæ‰§è¡Œåˆ°è¿™é‡Œ
+     * Ö´ĞĞÓ¦ÓÃ--ÔÚ¹á´©ÖĞ¼ä¼şÕ»Ö®ºó»áÖ´ĞĞµ½ÕâÀï
      *
      * This method implements the middleware interface. It receives
      * Request and Response objects, and it returns a Response object
@@ -518,7 +518,7 @@ class App
 
     /**
      * Dispatch the router to find the route. Prepare the route for use.
-     * è°ƒåº¦è·¯ç”±å™¨ï¼Œæ‰¾å‡ºæŒ‡å®šè·¯çº¿ï¼Œé…ç½®æŒ‡å®šè·¯çº¿ä»¥å¤‡ä½¿ç”¨
+     * µ÷¶ÈÂ·ÓÉÆ÷£¬ÕÒ³öÖ¸¶¨Â·Ïß£¬ÅäÖÃÖ¸¶¨Â·ÏßÒÔ±¸Ê¹ÓÃ
      *
      * @param ServerRequestInterface $request
      * @param RouterInterface        $router
@@ -526,36 +526,36 @@ class App
      */
     protected function dispatchRouterAndPrepareRoute(ServerRequestInterface $request, RouterInterface $router)
     {
-        // å°è¯•è°ƒåº¦è·¯ç”±
+        // ³¢ÊÔµ÷¶ÈÂ·ÓÉ
         $routeInfo = $router->dispatch($request);
 
-        // å¦‚æ‰¾åˆ°äº†è·¯çº¿
+        // ÈçÕÒµ½ÁËÂ·Ïß
         if ($routeInfo[0] === Dispatcher::FOUND) {
             $routeArguments = [];
             foreach ($routeInfo[2] as $k => $v) {
                 $routeArguments[$k] = urldecode($v);
             }
 
-            // è·¯ç”±å™¨æ ¹æ®è°ƒåº¦ä¿¡æ¯å¯»æ‰¾è·¯çº¿ï¼Œæ³¨æ„ï¼Œè¿”å›çš„æ˜¯Routeå®ä¾‹
+            // Â·ÓÉÆ÷¸ù¾İµ÷¶ÈĞÅÏ¢Ñ°ÕÒÂ·Ïß£¬×¢Òâ£¬·µ»ØµÄÊÇRouteÊµÀı
             $route = $router->lookupRoute($routeInfo[1]);
-            // è·¯çº¿å®ä¾‹æ ¹æ®è¯·æ±‚å®ä¾‹å’Œå‚æ•°å‡†å¤‡
+            // Â·ÏßÊµÀı¸ù¾İÇëÇóÊµÀıºÍ²ÎÊı×¼±¸
             $route->prepare($request, $routeArguments);
 
             // add route to the request's attributes in case a middleware or handler needs access to the route
-            // å°†è·¯å¾„ç±»åŠ å…¥åˆ°è¯·æ±‚å®ä¾‹ä¸­ï¼Œä»¥ä¾¿ä¸­é—´ä»¶å’Œå¥æŸ„è®¿é—®
+            // ½«Â·¾¶Àà¼ÓÈëµ½ÇëÇóÊµÀıÖĞ£¬ÒÔ±ãÖĞ¼ä¼şºÍ¾ä±ú·ÃÎÊ
             $request = $request->withAttribute('route', $route);
         }
 
-        // å°†å“åº”çš„è¯·æ±‚æ–¹æ³•å’ŒuriæŒ‚è½½åˆ°å¾—åˆ°çš„è·¯ç”±ä¿¡æ¯ä¸Š
+        // ½«ÏìÓ¦µÄÇëÇó·½·¨ºÍuri¹ÒÔØµ½µÃµ½µÄÂ·ÓÉĞÅÏ¢ÉÏ
         $routeInfo['request'] = [$request->getMethod(), (string) $request->getUri()];
 
-        // è¿”å›ä¸€ä¸ªæ·»åŠ äº†routeInfoå±æ€§çš„è¯·æ±‚å®ä¾‹
+        // ·µ»ØÒ»¸öÌí¼ÓÁËrouteInfoÊôĞÔµÄÇëÇóÊµÀı
         return $request->withAttribute('routeInfo', $routeInfo);
     }
 
     /**
      * Finalize response
-     * å®Œæˆå“åº”
+     * Íê³ÉÏìÓ¦
      *
      * @param ResponseInterface $response
      * @return ResponseInterface

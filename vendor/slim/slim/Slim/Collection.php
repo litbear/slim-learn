@@ -13,7 +13,7 @@ use Slim\Interfaces\CollectionInterface;
 
 /**
  * Collection
- * å®¹å™¨ç±»
+ * ÈİÆ÷Àà
  *
  * This class provides a common interface used by many other
  * classes in a Slim application that manage "collections"
@@ -35,9 +35,7 @@ class Collection implements CollectionInterface
      */
     public function __construct(array $items = [])
     {
-        foreach ($items as $key => $value) {
-            $this->set($key, $value);
-        }
+        $this->replace($items);
     }
 
     /********************************************************************************
@@ -69,7 +67,7 @@ class Collection implements CollectionInterface
     }
 
     /**
-     * Add item to collection
+     * Add item to collection, replacing existing items with the same data key
      *
      * @param array $items Key-value array of data to append to this collection
      */
@@ -191,12 +189,12 @@ class Collection implements CollectionInterface
 
     /********************************************************************************
      * IteratorAggregate interface
-     * å®ç°è‡ªIteratorAggregateæ¥å£
+     * ÊµÏÖ×ÔIteratorAggregate½Ó¿Ú
      *******************************************************************************/
 
     /**
      * Get collection iterator
-     * è·å–é›†åˆçš„è¿­ä»£å™¨
+     * »ñÈ¡¼¯ºÏµÄµü´úÆ÷
      *
      * @return \ArrayIterator
      */

@@ -10,11 +10,11 @@ namespace Slim\Interfaces;
 
 /**
  * Collection Interface
- * é‡å¯æ¥å£
+ * ÖØÆô½Ó¿Ú
  * 
- * å¯ä»¥æ•°ç»„å½¢å¼è®¿é—®ã€èµ‹å€¼
- * å¯è®¡æ•°
- * å¯èšåˆä»£ï¼ˆå¯foreachï¼‰
+ * ¿ÉÒÔÊı×éĞÎÊ½·ÃÎÊ¡¢¸³Öµ
+ * ¿É¼ÆÊı
+ * ¿É¾ÛºÏ´ú£¨¿Éforeach£©
  *
  * @package Slim
  * @since   3.0.0
