@@ -100,6 +100,7 @@ class DefaultServicesProvider
             /**
              * This service MUST return a SHARED instance
              * of \Slim\Interfaces\InvocationStrategyInterface.
+             * 定义路由策略，即路由回调函数的签名
              *
              * @return InvocationStrategyInterface
              */

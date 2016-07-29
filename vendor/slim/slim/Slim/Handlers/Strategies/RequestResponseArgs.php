@@ -14,6 +14,7 @@ use Slim\Interfaces\InvocationStrategyInterface;
 
 /**
  * Route callback strategy with route parameters as individual arguments.
+ * 将参数$routeArguments拆分为多个参数传入回调
  */
 class RequestResponseArgs implements InvocationStrategyInterface
 {
@@ -37,6 +38,7 @@ class RequestResponseArgs implements InvocationStrategyInterface
     ) {
         array_unshift($routeArguments, $request, $response);
 
+        // 关联数组，拆分参数，以键为参数名，值为参数值
         return call_user_func_array($callable, $routeArguments);
     }
 }

@@ -14,6 +14,7 @@ use Slim\Interfaces\InvocationStrategyInterface;
 
 /**
  * Default route callback strategy with route parameters as an array of arguments.
+ * 默认的路由回调策略，将参数$routeArguments作为关联数组的元素传入回调
  */
 class RequestResponse implements InvocationStrategyInterface
 {

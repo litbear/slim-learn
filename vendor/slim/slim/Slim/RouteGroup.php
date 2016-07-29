@@ -38,6 +38,7 @@ class RouteGroup extends Routable implements RouteGroupInterface
     public function __invoke(App $app = null)
     {
         $callable = $this->resolveCallable($this->callable);
+        // 将Closure中的上下文改变为App
         if ($callable instanceof Closure && $app !== null) {
             $callable = $callable->bindTo($app);
         }
