@@ -66,10 +66,10 @@ class Container extends PimpleContainer implements ContainerInterface
      */
     public function __construct(array $values = [])
     {
-        // Ö´ÐÐ¸¸ÀàPimpleµÄ¹¹Ôì·½·¨
+        // æ‰§è¡Œçˆ¶ç±»Pimpleçš„æž„é€ æ–¹æ³•
         parent::__construct($values);
 
-        // ¸ù¾ÝÓÃ»§ÉèÖÃ×¢²áÄ¬ÈÏ·þÎñ
+        // æ ¹æ®ç”¨æˆ·è®¾ç½®æ³¨å†Œé»˜è®¤æœåŠ¡
         $userSettings = isset($values['settings']) ? $values['settings'] : [];
         $this->registerDefaultServices($userSettings);
     }

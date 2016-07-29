@@ -13,13 +13,13 @@ use Slim\Interfaces\Http\EnvironmentInterface;
 
 /**
  * Environment
- * »·¾³Àà
+ * ç¯å¢ƒç±»
  *
  * This class decouples the Slim application from the global PHP environment.
  * This is particularly useful for unit testing, but it also lets us create
  * custom sub-requests.
- * ±¾Àà½«SlimÓ¦ÓÃ´ÓÈ«¾ÖµÄPHP»·¾³ÖĞ½âñî¡£ÕâÔÚµ¥Ôª²âÊÔÖĞÏÔµÃÓÈÎªÖØÒª£¬Í¬Ê±Ò²ÎªÎÒÃÇ
- * ´´½¨¸öĞÔ»¯µÄ×ÓÇëÇóÌá¹©±ãÀû
+ * æœ¬ç±»å°†Slimåº”ç”¨ä»å…¨å±€çš„PHPç¯å¢ƒä¸­è§£è€¦ã€‚è¿™åœ¨å•å…ƒæµ‹è¯•ä¸­æ˜¾å¾—å°¤ä¸ºé‡è¦ï¼ŒåŒæ—¶ä¹Ÿä¸ºæˆ‘ä»¬
+ * åˆ›å»ºä¸ªæ€§åŒ–çš„å­è¯·æ±‚æä¾›ä¾¿åˆ©
  */
 class Environment extends Collection implements EnvironmentInterface
 {

@@ -14,13 +14,13 @@ use Slim\Interfaces\CallableResolverInterface;
 
 /**
  * ResolveCallable
- * ½â¾öµ÷ÓÃ
+ * è§£å†³è°ƒç”¨
  *
  * This is an internal class that enables resolution of 'class:method' strings
  * into a closure. This class is an implementation detail and is used only inside
  * of the Slim application.
- * ±¾ÀàÊÇÒ»¸ö¿ÉÒÔ½«ĞÎÈç'class:method'µÄ×Ö·û´®½âÎöÎª±Õ°ü¡£±¾ÀàÊÇÏ¸½ÚÊµÏÖ£¬½ö¹©SlimÄÚ²¿
- * Ê¹ÓÃ
+ * æœ¬ç±»æ˜¯ä¸€ä¸ªå¯ä»¥å°†å½¢å¦‚'class:method'çš„å­—ç¬¦ä¸²è§£æä¸ºé—­åŒ…ã€‚æœ¬ç±»æ˜¯ç»†èŠ‚å®ç°ï¼Œä»…ä¾›Slimå†…éƒ¨
+ * ä½¿ç”¨
  *
  * @property ContainerInterface $container
  */
@@ -29,7 +29,7 @@ trait CallableResolverAwareTrait
     /**
      * Resolve a string of the format 'class:method' into a closure that the
      * router can dispatch.
-     * ½«ĞÎÈç'class:method'µÄ×Ö·û´®½âÎöÎªÂ·ÓÉÆ÷¿ÉÒÔµ÷¶ÈµÄ±Õ°ü
+     * å°†å½¢å¦‚'class:method'çš„å­—ç¬¦ä¸²è§£æä¸ºè·¯ç”±å™¨å¯ä»¥è°ƒåº¦çš„é—­åŒ…
      *
      * @param callable|string $callable
      *

@@ -15,7 +15,7 @@ use Slim\Interfaces\CallableResolverInterface;
 /**
  * This class resolves a string of the format 'class:method' into a closure
  * that can be dispatched.
- * ±¾Àà½«ĞÎÈç'class:method'µÄ×Ö·û´®½âÎöÎªÂ·ÓÉÆ÷¿ÉÒÔµ÷¶ÈµÄ±Õ°ü
+ * æœ¬ç±»å°†å½¢å¦‚'class:method'çš„å­—ç¬¦ä¸²è§£æä¸ºè·¯ç”±å™¨å¯ä»¥è°ƒåº¦çš„é—­åŒ…
  */
 final class CallableResolver implements CallableResolverInterface
 {
@@ -34,12 +34,12 @@ final class CallableResolver implements CallableResolverInterface
 
     /**
      * Resolve toResolve into a closure that that the router can dispatch.
-     * ½«´«ÈëµÄ²ÎÊı½âÎöÎªÂ·ÓÉÆ÷¿ÉÒÔµ÷¶ÈµÄ£¬callableµÄÊı×é
+     * å°†ä¼ å…¥çš„å‚æ•°è§£æä¸ºè·¯ç”±å™¨å¯ä»¥è°ƒåº¦çš„ï¼Œcallableçš„æ•°ç»„
      *
      * If toResolve is of the format 'class:method', then try to extract 'class'
      * from the container otherwise instantiate it and then dispatch 'method'.
-     * ¼ÙÈç´«ÈëµÄ²ÎÊıĞÎÈç'class:method', Ôò³¢ÊÔ½âÎö³öÀà²¢×éºÏ³ÉcallableÊı×é£¬·ñÔò
-     * ÊµÀı»¯Ö®
+     * å‡å¦‚ä¼ å…¥çš„å‚æ•°å½¢å¦‚'class:method', åˆ™å°è¯•è§£æå‡ºç±»å¹¶ç»„åˆæˆcallableæ•°ç»„ï¼Œå¦åˆ™
+     * å®ä¾‹åŒ–ä¹‹
      *
      * @param mixed $toResolve
      *
@@ -52,34 +52,34 @@ final class CallableResolver implements CallableResolverInterface
     {
         $resolved = $toResolve;
 
-        // Èç¹û²»¿Éµ÷ÓÃ£¬ÇÒÊÇ×Ö·û´®£¬Ôò³¢ÊÔ½âÎö
+        // å¦‚æœä¸å¯è°ƒç”¨ï¼Œä¸”æ˜¯å­—ç¬¦ä¸²ï¼Œåˆ™å°è¯•è§£æ
         if (!is_callable($toResolve) && is_string($toResolve)) {
             // check for slim callable as "class:method"
-            // ³¢ÊÔÒÔ"class:method"µÄ·½Ê½½âÎö
-            // ·Ç£º¿ªÍ·µÄ¶à¸ö×Ö·û£¬£º£¬½ô¸ú×ÖÄ¸ÏÂ»®Ïß£¬ÔÙ¸úÊı×Ö×ÖÄ¸ÏÂ»®Ïß
+            // å°è¯•ä»¥"class:method"çš„æ–¹å¼è§£æ
+            // éï¼šå¼€å¤´çš„å¤šä¸ªå­—ç¬¦ï¼Œï¼šï¼Œç´§è·Ÿå­—æ¯ä¸‹åˆ’çº¿ï¼Œå†è·Ÿæ•°å­—å­—æ¯ä¸‹åˆ’çº¿
             $callablePattern = '!^([^\:]+)\:([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)$!';
             if (preg_match($callablePattern, $toResolve, $matches)) {
                 $class = $matches[1];
                 $method = $matches[2];
 
-                // Èç¹ûÈİÆ÷ÖĞÓĞ´ËÀà£¨ÊµÀı»¹ÊÇÀàÃû£¿£©
-                // Ôò°ü×°³ÉcallableÊı×é
+                // å¦‚æœå®¹å™¨ä¸­æœ‰æ­¤ç±»ï¼ˆå®ä¾‹è¿˜æ˜¯ç±»åï¼Ÿï¼‰
+                // åˆ™åŒ…è£…æˆcallableæ•°ç»„
                 if ($this->container->has($class)) {
                     $resolved = [$this->container->get($class), $method];
                 } else {
-                    // Èç¹û¸ÃÀà²»´æÔÚ£¬ÔòÅ×³öÒì³£
+                    // å¦‚æœè¯¥ç±»ä¸å­˜åœ¨ï¼Œåˆ™æŠ›å‡ºå¼‚å¸¸
                     if (!class_exists($class)) {
                         throw new RuntimeException(sprintf('Callable %s does not exist', $class));
                     }
-                    // ×îÖÕ°ü×°³ÉÊµÀıºÍ·½·¨×é³ÉµÄcallableÊı×é
+                    // æœ€ç»ˆåŒ…è£…æˆå®ä¾‹å’Œæ–¹æ³•ç»„æˆçš„callableæ•°ç»„
                     $resolved = [new $class($this->container), $method];
                 }
             } else {
                 // check if string is something in the DIC that's callable or is a class name which
                 // has an __invoke() method
-                // Èç¹û²»·ûºÏ"class:method"Ä£Ê½£¬ÔòÏÈÈ¥DIÈİÆ÷ÖĞ¿´ÓĞÃ»ÓĞÕâÒ»Ïî£¬Èç¹ûÓĞ£¬
-                // ÔòÈ¡³ö£¨ÓĞ¿ÉÄÜÊÇÊµÀı£¬Ò²ÓĞ¿ÉÄÜÊÇÅäÖÃÏî£©
-                // Èç¹ûÈİÆ÷ÖĞÃ»ÕâÒ»Ïî£¬ÔòÒÔÀàÃû²éÕÒ¿´´æ²»´æ×Ó°¡£¬ÔÙ³¢ÊÔÊµÀı»¯
+                // å¦‚æœä¸ç¬¦åˆ"class:method"æ¨¡å¼ï¼Œåˆ™å…ˆå»DIå®¹å™¨ä¸­çœ‹æœ‰æ²¡æœ‰è¿™ä¸€é¡¹ï¼Œå¦‚æœæœ‰ï¼Œ
+                // åˆ™å–å‡ºï¼ˆæœ‰å¯èƒ½æ˜¯å®ä¾‹ï¼Œä¹Ÿæœ‰å¯èƒ½æ˜¯é…ç½®é¡¹ï¼‰
+                // å¦‚æœå®¹å™¨ä¸­æ²¡è¿™ä¸€é¡¹ï¼Œåˆ™ä»¥ç±»åæŸ¥æ‰¾çœ‹å­˜ä¸å­˜å­å•Šï¼Œå†å°è¯•å®ä¾‹åŒ–
                 $class = $toResolve;
                 if ($this->container->has($class)) {
                     $resolved = $this->container->get($class);
@@ -92,7 +92,7 @@ final class CallableResolver implements CallableResolverInterface
             }
         }
 
-        // Èç¹û½âÎöÊ§°Ü£¬²»¿Éµ÷ÓÃ£¬ÔòÅ×³öÒì³£
+        // å¦‚æœè§£æå¤±è´¥ï¼Œä¸å¯è°ƒç”¨ï¼Œåˆ™æŠ›å‡ºå¼‚å¸¸
         if (!is_callable($resolved)) {
             throw new RuntimeException(sprintf(
                 '%s is not resolvable',

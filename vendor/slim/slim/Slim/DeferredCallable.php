@@ -13,9 +13,9 @@ use Closure;
 use Interop\Container\ContainerInterface;
 
 /**
- * ÑÓ³Ù(µ÷ÓÃ)¶ÔÏó
+ * å»¶è¿Ÿ(è°ƒç”¨)å¯¹è±¡
  * 
- * µ÷ÓÃÁËÑÓ³Ùµ÷ÓÃ¶ÔÏóµÄÊµÀı¾ÍµÈÓÚµ÷ÓÃÁËÖĞ¼ä¼ş
+ * è°ƒç”¨äº†å»¶è¿Ÿè°ƒç”¨å¯¹è±¡çš„å®ä¾‹å°±ç­‰äºè°ƒç”¨äº†ä¸­é—´ä»¶
  */
 
 class DeferredCallable
@@ -40,9 +40,9 @@ class DeferredCallable
     public function __invoke()
     {
         $callable = $this->resolveCallable($this->callable);
-        // Èç¹û$callable²»ÊÇ¿Éµ÷ÓÃ(callable)Êı×é£¬¶øÊÇ±Õ°ü
+        // å¦‚æœ$callableä¸æ˜¯å¯è°ƒç”¨(callable)æ•°ç»„ï¼Œè€Œæ˜¯é—­åŒ…
         if ($callable instanceof Closure) {
-            // Èç¹ûÊÇ±Õ°ü£¬Ôò¸Ä±äÆäÉÏÏÂÎÄ
+            // å¦‚æœæ˜¯é—­åŒ…ï¼Œåˆ™æ”¹å˜å…¶ä¸Šä¸‹æ–‡
             $callable = $callable->bindTo($this->container);
         }
 

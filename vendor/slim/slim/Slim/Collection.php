@@ -13,7 +13,7 @@ use Slim\Interfaces\CollectionInterface;
 
 /**
  * Collection
- * ÈİÆ÷Àà
+ * å®¹å™¨ç±»
  *
  * This class provides a common interface used by many other
  * classes in a Slim application that manage "collections"
@@ -189,12 +189,12 @@ class Collection implements CollectionInterface
 
     /********************************************************************************
      * IteratorAggregate interface
-     * ÊµÏÖ×ÔIteratorAggregate½Ó¿Ú
+     * å®ç°è‡ªIteratorAggregateæ¥å£
      *******************************************************************************/
 
     /**
      * Get collection iterator
-     * »ñÈ¡¼¯ºÏµÄµü´úÆ÷
+     * è·å–é›†åˆçš„è¿­ä»£å™¨
      *
      * @return \ArrayIterator
      */
