@@ -60,6 +60,7 @@ abstract class Routable
 
     /**
      * Get the route pattern
+     * 获取本实例的模式
      *
      * @return string
      */

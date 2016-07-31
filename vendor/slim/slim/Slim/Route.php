@@ -76,7 +76,7 @@ class Route extends Routable implements RouteInterface
      * @param string            $pattern The route pattern
      * @param callable          $callable The route callable
      * @param RouteGroup[]      $groups The parent route groups
-     * @param int               $identifier The route identifier
+     * @param int               $identifier The route identifier 唯一序号
      */
     public function __construct($methods, $pattern, $callable, $groups = [], $identifier = 0)
     {

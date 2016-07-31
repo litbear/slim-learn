@@ -247,7 +247,9 @@ class App
             $callable = $callable->bindTo($this->container);
         }
 
+        // 返回新增的Route实例，并且将其传入Router实例的routes属性
         $route = $this->container->get('router')->map($methods, $pattern, $callable);
+        // 注入参数
         if (is_callable([$route, 'setContainer'])) {
             $route->setContainer($this->container);
         }
@@ -274,8 +276,20 @@ class App
     public function group($pattern, $callable)
     {
         /** @var RouteGroup $group */
+        /**
+         * router是单例，在整个应用的生命周期内只有一次，因此，group
+         * 是在执行的过程中，反复操作router的routeGroups属性，为其分组
+         * 而后恢复其routeGroups属性
+         */
+        /**
+         * pushGroup内部实例化了RouteGroup，并将其压入Router::routeGroups属性
+         * 进而返回新创建的RouteGroup实例
+         */
         $group = $this->container->get('router')->pushGroup($pattern, $callable);
         $group->setContainer($this->container);
+        // RouteGroup::__invoke执行了callable
+        // 在callable内，不断的执行$app::map()方法，向router实例
+        // 的routes属性内加入新建的Route实例
         $group($this);
         $this->container->get('router')->popGroup();
         return $group;
@@ -350,7 +364,7 @@ class App
         // Traverse middleware stack
         // 穿过中间件
         try {
-            // 依次调用中间件栈内的中间件
+            // 依次调用中间件栈内的中间件 最后执行$app::__invoke()方法
             $response = $this->callMiddlewareStack($request, $response);
         } catch (Exception $e) {
             $response = $this->handleException($e, $request, $response);

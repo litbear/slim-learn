@@ -139,19 +139,23 @@ class Router implements RouterInterface
      */
     public function map($methods, $pattern, $handler)
     {
+        // 模式必须是字符串
         if (!is_string($pattern)) {
             throw new InvalidArgumentException('Route pattern must be a string');
         }
 
         // Prepend parent group pattern(s)
+        // 处理前置的组
         if ($this->routeGroups) {
             $pattern = $this->processGroups() . $pattern;
         }
 
+        // 将所有http方法都转为大写
         // According to RFC methods are defined in uppercase (See RFC 7231)
         $methods = array_map("strtoupper", $methods);
 
         // Add route
+        // 创建Route实例，并加入到本实例的routes属性
         $route = $this->createRoute($methods, $pattern, $handler);
         $this->routes[$route->getIdentifier()] = $route;
         $this->routeCounter++;
@@ -180,6 +184,7 @@ class Router implements RouterInterface
 
     /**
      * Create a new Route object
+     * 创建路径实例
      *
      * @param  string[] $methods Array of HTTP methods
      * @param  string   $pattern The route pattern
@@ -289,6 +294,8 @@ class Router implements RouterInterface
 
     /**
      * Add a route group to the array
+     * 根据pattern参数，实例化RouteGroup，将其压入routeGroups
+     * 属性，并返回
      *
      * @param string   $pattern
      * @param callable $callable
@@ -304,6 +311,7 @@ class Router implements RouterInterface
 
     /**
      * Removes the last route group from the array
+     * 弹出routeGroups属性的最后一个数组元素，并返回
      *
      * @return RouteGroup|bool The RouteGroup if successful, else False
      */
