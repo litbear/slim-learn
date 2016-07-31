@@ -8,6 +8,7 @@ class RouteCollector {
 
     /**
      * Constructs a route collector.
+     * 初始化路径收集器
      *
      * @param RouteParser   $routeParser
      * @param DataGenerator $dataGenerator
@@ -19,6 +20,7 @@ class RouteCollector {
 
     /**
      * Adds a route to the collection.
+     * 向容器中添加路径
      *
      * The syntax used in the $route string depends on the used route parser.
      *

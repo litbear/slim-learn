@@ -460,6 +460,7 @@ class App
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
     {
         // Get the route info
+        // routeInfo属性应该是由中间件赋予的
         $routeInfo = $request->getAttribute('routeInfo');
 
         /** @var \Slim\Interfaces\RouterInterface $router */
@@ -475,6 +476,7 @@ class App
             $route = $router->lookupRoute($routeInfo[1]);
             return $route->run($request, $response);
         } elseif ($routeInfo[0] === Dispatcher::METHOD_NOT_ALLOWED) {
+            // 根据设置，使用指定的句柄
             if (!$this->container->has('notAllowedHandler')) {
                 throw new MethodNotAllowedException($request, $response, $routeInfo[1]);
             }
@@ -483,6 +485,7 @@ class App
             return $notAllowedHandler($request, $response, $routeInfo[1]);
         }
 
+        // 必须设置notFoundHandler 句柄
         if (!$this->container->has('notFoundHandler')) {
             throw new NotFoundException($request, $response);
         }
@@ -550,11 +553,13 @@ class App
         // 如找到了路线
         if ($routeInfo[0] === Dispatcher::FOUND) {
             $routeArguments = [];
+            // map或walk一下是否更好？
             foreach ($routeInfo[2] as $k => $v) {
                 $routeArguments[$k] = urldecode($v);
             }
 
-            // 路由器根据调度信息寻找路线，注意，返回的是Route实例
+            // 路由器根据调度信息中的callback寻找路线，注意，返回的是Route实例
+            // 本应用中的Router类与Fast Router类之间传输的其实是路由id
             $route = $router->lookupRoute($routeInfo[1]);
             // 路线实例根据请求实例和参数准备
             $route->prepare($request, $routeArguments);

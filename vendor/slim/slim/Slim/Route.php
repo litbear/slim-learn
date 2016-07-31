@@ -264,6 +264,7 @@ class Route extends Routable implements RouteInterface
 
     /**
      * Prepare the route for use
+     * 准备路径
      *
      * @param ServerRequestInterface $request
      * @param array $arguments

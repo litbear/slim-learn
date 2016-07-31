@@ -4,16 +4,22 @@ namespace FastRoute;
 
 if (!function_exists('FastRoute\simpleDispatcher')) {
     /**
-     * @param callable $routeDefinitionCallback
-     * @param array $options
+     * 调度器入口
+     * 
+     * @param callable $routeDefinitionCallback 进一步定义路由规则容器的回调函数
+     * @param array $options 其他补充参数
      *
      * @return Dispatcher
      */
     function simpleDispatcher(callable $routeDefinitionCallback, array $options = []) {
         $options += [
+            // 路由解析器
             'routeParser' => 'FastRoute\\RouteParser\\Std',
+            // 数据生成器
             'dataGenerator' => 'FastRoute\\DataGenerator\\GroupCountBased',
+            // 调度器
             'dispatcher' => 'FastRoute\\Dispatcher\\GroupCountBased',
+            // 路径规则容器
             'routeCollector' => 'FastRoute\\RouteCollector',
         ];
 
@@ -27,6 +33,8 @@ if (!function_exists('FastRoute\simpleDispatcher')) {
     }
 
     /**
+     * 兼有缓存功能的调度器入口
+     * 
      * @param callable $routeDefinitionCallback
      * @param array $options
      *

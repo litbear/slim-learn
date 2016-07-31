@@ -88,6 +88,7 @@ class DefaultServicesProvider
              */
             $container['router'] = function ($container) {
                 $routerCacheFile = false;
+                // 根据配置决定是否需要注入缓存参数
                 if (isset($container->get('settings')['routerCacheFile'])) {
                     $routerCacheFile = $container->get('settings')['routerCacheFile'];
                 }

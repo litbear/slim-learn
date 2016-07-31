@@ -105,6 +105,7 @@ class Router implements RouterInterface
 
     /**
      * Set path to fast route cache file. If this is false then route caching is disabled.
+     * 根据给定的缓存文件参数，决定是否开启fast router的缓存机制
      *
      * @param string|false $cacheFile
      *
@@ -165,6 +166,13 @@ class Router implements RouterInterface
 
     /**
      * Dispatch router for HTTP request
+     * 为HTTP请求调度路由
+     * 结果为以下几种格式：
+     *     [self::NOT_FOUND]
+     *     [self::METHOD_NOT_ALLOWED, ['GET', 'OTHER_ALLOWED_METHODS']]
+     *     本应用中，默认取到$handles的是路由id
+     *     一个疑问，fast router是如何得到路由id的？？？
+     *     [self::FOUND, $handler, ['varName' => 'value', ...]]
      *
      * @param  ServerRequestInterface $request The current HTTP request object
      *
@@ -198,6 +206,8 @@ class Router implements RouterInterface
     }
 
     /**
+     * 创建调度器实例
+     * 
      * @return \FastRoute\Dispatcher
      */
     protected function createDispatcher()
@@ -212,6 +222,7 @@ class Router implements RouterInterface
             }
         };
 
+        // 是否缓存
         if ($this->cacheFile) {
             $this->dispatcher = \FastRoute\cachedDispatcher($routeDefinitionCallback, [
                 'routeParser' => $this->routeParser,
@@ -227,6 +238,8 @@ class Router implements RouterInterface
     }
 
     /**
+     * 设置调度器
+     * 
      * @param \FastRoute\Dispatcher $dispatcher
      */
     public function setDispatcher(Dispatcher $dispatcher)
@@ -322,6 +335,8 @@ class Router implements RouterInterface
     }
 
     /**
+     * 根据id寻找路径route实例
+     * 
      * @param $identifier
      * @return \Slim\Interfaces\RouteInterface
      */
