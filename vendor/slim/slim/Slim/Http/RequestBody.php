@@ -15,6 +15,9 @@ class RequestBody extends Body
 {
     /**
      * Create a new RequestBody.
+     * 创建请求体，这里拷贝了php://input流，而input流在
+     * 客户端使用了enctype="multipart/form-data"时，是
+     * 无效的
      */
     public function __construct()
     {

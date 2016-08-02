@@ -83,9 +83,11 @@ class UploadedFile implements UploadedFileInterface
      */
     public static function createFromEnvironment(Environment $env)
     {
+        // 优先处理Environment中的“上传文件”
         if (is_array($env['slim.files']) && $env->has('slim.files')) {
             return $env['slim.files'];
         } elseif (isset($_FILES)) {
+            // 解析上传文件
             return static::parseUploadedFiles($_FILES);
         }
 
@@ -94,6 +96,7 @@ class UploadedFile implements UploadedFileInterface
 
     /**
      * Parse a non-normalized, i.e. $_FILES superglobal, tree of uploaded file data.
+     * 解析未规格化的上传文件
      *
      * @param array $uploadedFiles The non-normalized tree of uploaded file data.
      *
@@ -105,13 +108,17 @@ class UploadedFile implements UploadedFileInterface
         foreach ($uploadedFiles as $field => $uploadedFile) {
             if (!isset($uploadedFile['error'])) {
                 if (is_array($uploadedFile)) {
+                    // 多个文件，递归解析
                     $parsed[$field] = static::parseUploadedFiles($uploadedFile);
                 }
+                // 跳出当前循环，后面代码不再执行
                 continue;
             }
 
+            // 走到这里的都是单个文件
             $parsed[$field] = [];
             if (!is_array($uploadedFile['error'])) {
+                // 如果$uploadedFile['error']不是数组，则正常new一个实例
                 $parsed[$field] = new static(
                     $uploadedFile['tmp_name'],
                     isset($uploadedFile['name']) ? $uploadedFile['name'] : null,
@@ -122,6 +129,7 @@ class UploadedFile implements UploadedFileInterface
                 );
             } else {
                 $subArray = [];
+                // http://php.net/manual/en/reserved.variables.files.php#89674
                 foreach ($uploadedFile['error'] as $fileIdx => $error) {
                     // normalise subarray and re-parse to move the input's keyname up a level
                     $subArray[$fileIdx]['name'] = $uploadedFile['name'][$fileIdx];
